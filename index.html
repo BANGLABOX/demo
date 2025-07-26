@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Custom IDM Download Link + Separate m3u8 Player Link</title>
+  <link href="https://vjs.zencdn.net/7.21.1/video-js.css" rel="stylesheet" />
+  <style>
+    body {
+      background: #000; color: #fff; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0;
+    }
+    .video-js {
+      width: 90vw; max-width: 720px; height: 40vw; max-height: 405px; border-radius: 12px; margin-bottom: 20px;
+    }
+    .download-link {
+      background: #ff3366; padding: 12px 24px; border-radius: 6px; text-decoration: none; color: white; font-weight: bold; font-size: 16px;
+    }
+    .download-link:hover {
+      background: #ff5588;
+    }
+  </style>
+</head>
+<body>
+
+  <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" poster="https://via.placeholder.com/720x405.png?text=Video+Poster"></video>
+
+  <!-- IDM ডাউনলোডের জন্য আলাদা লিংক -->
+  <a id="idmDownload" href="https://example.com/custom-download-link.m3u8" class="download-link" download target="_blank" rel="noopener noreferrer">
+    IDM দিয়ে ভিডিও ডাউনলোড করুন
+  </a>
+
+  <script src="https://cdn.jsdelivr.net/npm/video.js@7.21.1/dist/video.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-http-streaming@2.13.3/dist/videojs-http-streaming.min.js"></script>
+  <script>
+    const player = videojs('my-video');
+
+    // প্লেয়ারে আলাদা m3u8 লিংক দিন
+    const playerM3U8Link = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+
+    // IDM ডাউনলোডের জন্য আলাদা লিংক দিন (আপনি কাস্টম দিতে পারবেন)
+    const idmDownloadLink = 'marjan';
+
+    // ভিডিও প্লেয়ারে লিংক সেট করা
+    player.ready(() => {
+      player.src({
+        src: playerM3U8Link,
+        type: 'application/x-mpegURL'
+      });
+      player.play();
+    });
+
+    // IDM ডাউনলোড বাটনে আলাদা লিংক বসানো
+    document.getElementById('idmDownload').href = idmDownloadLink;
+
+  </script>
+
+</body>
+</html>
