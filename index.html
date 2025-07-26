@@ -1,56 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
-  <title>Custom IDM Download Link + Separate m3u8 Player Link</title>
-  <link href="https://vjs.zencdn.net/7.21.1/video-js.css" rel="stylesheet" />
+  <title>Professional Video Player IDM Protected</title>
   <style>
     body {
-      background: #000; color: #fff; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0;
+      margin: 0; background: #121212; color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100vh;
     }
-    .video-js {
-      width: 90vw; max-width: 720px; height: 40vw; max-height: 405px; border-radius: 12px; margin-bottom: 20px;
+    #player-container {
+      position: relative;
+      width: 90vw; max-width: 720px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
     }
-    .download-link {
-      background: #ff3366; padding: 12px 24px; border-radius: 6px; text-decoration: none; color: white; font-weight: bold; font-size: 16px;
+    video {
+      width: 100%; height: auto;
+      display: block;
+      background: #000;
     }
-    .download-link:hover {
-      background: #ff5588;
+    #controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(20, 20, 20, 0.8);
+      padding: 10px 15px;
+    }
+    button {
+      background: #ff3366;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      user-select: none;
+    }
+    button:hover {
+      background: #ff5577;
+    }
+    #download-link {
+      margin-top: 15px;
+      background: #00ccff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #000;
+      font-weight: bold;
+      user-select: none;
+    }
+    #download-link:hover {
+      background: #33ddff;
     }
   </style>
 </head>
 <body>
 
-  <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" poster="https://via.placeholder.com/720x405.png?text=Video+Poster"></video>
+  <div id="player-container">
+    <video id="video" controls muted playsinline preload="auto" poster="https://via.placeholder.com/720x405.png?text=GAZI+MOVIES">
+      Your browser does not support the video tag.
+    </video>
+    <div id="controls">
+      <button id="playPause">Play</button>
+      <button id="fullscreenBtn">Fullscreen</button>
+    </div>
+  </div>
 
-  <!-- IDM ডাউনলোডের জন্য আলাদা লিংক -->
-  <a id="idmDownload" href="https://example.com/custom-download-link.m3u8" class="download-link" download target="_blank" rel="noopener noreferrer">
-    IDM দিয়ে ভিডিও ডাউনলোড করুন
+  <!-- IDM এর জন্য আলাদা ডাউনলোড লিংক (আপনি এখানে অন্য লিংক দেবেন) -->
+  <a id="download-link" href="https://example.com/your-download-link.m3u8" target="_blank" rel="noopener noreferrer" download>
+    IDM দিয়ে ডাউনলোড করুন
   </a>
 
-  <script src="https://cdn.jsdelivr.net/npm/video.js@7.21.1/dist/video.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/videojs-http-streaming@2.13.3/dist/videojs-http-streaming.min.js"></script>
   <script>
-    const player = videojs('my-video');
+    const video = document.getElementById('video');
+    const playPauseBtn = document.getElementById('playPause');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
 
-    // প্লেয়ারে আলাদা m3u8 লিংক দিন
-    const playerM3U8Link = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+    // এখানে আপনার প্লেয়ার m3u8 লিংক দিন (public বা প্রাইভেট)
+    const videoM3U8Link = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
 
-    // IDM ডাউনলোডের জন্য আলাদা লিংক দিন (আপনি কাস্টম দিতে পারবেন)
-    const idmDownloadLink = 'marjan';
+    // Blob হিসেবে fetch করে ভিডিও সেট করবো (IDM থেকে লিংক লুকানোর জন্য)
+    async function loadVideoBlob(url) {
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        video.src = blobUrl;
+      } catch (e) {
+        console.error('ভিডিও লোডে সমস্যা:', e);
+        video.src = url; // fallback
+      }
+    }
 
-    // ভিডিও প্লেয়ারে লিংক সেট করা
-    player.ready(() => {
-      player.src({
-        src: playerM3U8Link,
-        type: 'application/x-mpegURL'
-      });
-      player.play();
+    loadVideoBlob(videoM3U8Link);
+
+    playPauseBtn.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+        playPauseBtn.textContent = 'Pause';
+      } else {
+        video.pause();
+        playPauseBtn.textContent = 'Play';
+      }
     });
 
-    // IDM ডাউনলোড বাটনে আলাদা লিংক বসানো
-    document.getElementById('idmDownload').href = idmDownloadLink;
-
+    fullscreenBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.getElementById('player-container').requestFullscreen().catch(err => {
+          alert(Fullscreen error: ${err.message});
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    });
   </script>
 
 </body>
